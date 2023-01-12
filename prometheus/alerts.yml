@@ -20,3 +20,22 @@ groups:
     annotations:
       summary: "Instance {{ $labels.instance }} under high load"
       description: "{{ $labels.instance }} of job {{ $labels.job }} is under high load."
+
+  - alert: HostOutOfMemory
+    expr: node_memory_MemAvailable / node_memory_MemTotal * 100 < 25
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Host out of memory (instance {{ $labels.instance }})"
+      description: "Node memory is filling up (< 25% left)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+
+  - alert: HostOutOfDiskSpace
+    expr: (node_filesystem_avail{mountpoint="/"}  * 100) / node_filesystem_size{mountpoint="/"} < 50
+    for: 1s
+    labels:
+      severity: warning
+    annotations:
+      summary: "Host out of disk space (instance {{ $labels.instance }})"
+      description: "Disk is almost full (< 50% left)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
