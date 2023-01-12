@@ -1,10 +1,29 @@
 route:
-  receiver: 'slack'
+  group_by: [ alertname ]
+  receiver: 'mail' # default receiver
+  repeat_interval: 24h
+  routes:
+    - receiver: 'teams'
+      repeat_interval: 12h
+      matchers:
+        - severity="medium"
+
+    - receiver: 'teams'
+      repeat_interval: 4h
+      matchers:
+        - severity="high"
 
 receivers:
-  - name: 'slack'
-#       slack_configs:
-#           - send_resolved: true
-#             username: '<username>'
-#             channel: '#<channel-name>'
-#             api_url: '<incomming-webhook-url>'
+  - name: 'mail'
+    email_configs:
+      - smarthost: 'smtp.mailgun.org:587'
+        auth_username: 'postmaster@sandboxc4677aed271944f1aae697022f86a3b1.mailgun.org'
+        auth_password: "3kh9umujora5"
+        from: 'yourmail@yourmailhost.com'
+        to: 'louis.tan@evvolabs.com'
+        require_tls: false # if you have problems with tls
+
+  - name: 'teams'
+    webhook_configs:
+      - url: "http://prom2teams:8089"
+        send_resolved: true

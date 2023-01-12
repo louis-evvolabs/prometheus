@@ -101,3 +101,10 @@ services:
       - front-tier
     restart: always
 
+  prom2teams:
+    image: idealista/prom2teams:2.7.0
+    restart: unless-stopped
+    environment:
+      PROM2TEAMS_CONNECTOR: webhookurl
+    ports:
+      - 8089:8089
